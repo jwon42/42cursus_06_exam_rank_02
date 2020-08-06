@@ -1,156 +1,54 @@
-## :notebook_with_decorative_cover: get_next_line
+## :notebook_with_decorative_cover: get_next_line(exam_rank_02)
 
-#### :page_facing_up: Prototype
+#### :page_facing_up:  subject.en.txt
 
-- ```c
-  int	get_next_line(int fd, char **line);
-  ```
-
-#### :page_facing_up: ​Description
-
-- **Write a function which returns a line read from a file descriptor, without the newline.**
-
-#### :page_facing_up: Parameters
-
-- `int fd` : file descriptor for reading
-- `char **line` : The value of what has been read
-
-#### :page_facing_up: Return value
-
-- `1 ` : A line has been read
-- `0` : EOF has been reached
-- `-1` : An error happened
-
-------
-
-#### :page_facing_up: Comments In header file ([get_next_line.h](/02_get_next_line/get_next_line.h))
-
-- ```c
-  # include <stdlib.h> /* To use 'malloc', 'free' function */
-  # include <fcntl.h> /* To use 'read' function */
-  # include <unistd.h> /* To use 'write' function */
-  # include <limits.h> /* To use 'OPEN_MAX' defined macro */
+- ```
+  Assignment name  : get_next_line
+  Expected files   : get_next_line.c get_next_line.h
+  Allowed functions: read, free, malloc
+  --------------------------------------------------------------------------------
   
-  /* Libft functions */
-  size_t	ft_strlen(const char *str);
-  char	*ft_strdup(const char *str);
-  char	*ft_strchr(const char *str, int c);
-  char	*ft_substr(char const *s, unsigned int start, size_t len);
-  char	*ft_strjoin(char *s1, char *s2);
+  Write a function will store, in the parameter "line", a line that has been read from the file descriptor 0.
   
-  /* Read 'buffer' and attach it to 'store' */
-  int	read_buffer(int fd, char **store);
-  /* Split 'store' by newline and save it in 'line' and 'store' */
-  void	split_store(char **store, char **line);
-  /* Check errors, call sub functions if needed, and return the value. */
-  int	get_next_line(int fd, char **line);
-  ```
-
-------
-
-#### :page_facing_up: Example
-
-- file.txt *(\n -> line feed)*
-
-  ```
-  "Lorem ipsum dolor sit amet,(/n)
-  consectetur adipiscing elit,(/n)
-  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.(/n)
-  Ut enim ad minim veniam,(/n)
-  quis nostrud exercitation ullamco(/n)
-  laboris nisi ut aliquip ex ea commodo consequat.(/n)
-  Duis aute irure dolor in reprehenderit in(/n)
-  voluptate velit esse cillum dolore eu fugiat nulla pariatur.(/n)
-  Excepteur sint occaecat cupidatat non proident,(/n)
-  sunt in culpa qui officia deserunt mollit anim id est laborum."
-  ```
-
-------
-
-- main_01.c
-
-  ```c
-  #include <stdio.h>
+  Your function must be prototyped as follows: int get_next_line(char **line);
   
-  int main(void)
-  {
-  	int return_value;
-  	int fd;
-  	char *line = 0;
+  Your function should be memory leak free.
   
-  	fd = open("./file.txt", O_RDONLY);
-  	return_value = get_next_line(fd, &line);
-  	printf("line %d : %s\n", idx, line);
-  	free(line);
-  	printf("\nreturn value = %d", return_value);
-  	return (0);
-  }
-  ```
-
-- a.out (`gcc gnl.c gnlutils.c gnl.h main_01.c -D BUFFER_SIZE=123`)
-
-  ```
-  line 1 : "Lorem ipsum dolor sit amet,
+  What we call a "line that has been read" is a succession of 0 to n characters that end with '\n' (ascii code 0x0a) or with End Of File (EOF).
   
-  return value = 1
-  ```
-
-------
-
-- main_02.c
-
-  ```c
-  #include <stdio.h>
+  The string stored in the parameter "line" should not contained any '\n'.
   
-  int main(void)
-  {
-  	int return_value;
-  	int fd;
-  	int idx;
-  	char *line = 0;
+  The parameter is the address of a pointer to a character that will be used to store the line read.
   
-  	fd = open("./file.txt", O_RDONLY);
-  	idx = 1;
-  	while ((return_value = get_next_line(fd, &line)) > 0)
-  	{
-  		printf("line %d : %s\n", idx, line);
-  		idx++;
-  		free(line);
-  	}
-  	printf("line %d : %s\n", idx, line);
-  	free(line);
-  	printf("\nreturn value = %d", return_value);
-  	return (0);
-  }
-  ```
-
-- a.out (`gcc gnl.c gnlutils.c gnl.h main_02.c -D BUFFER_SIZE=123`)
-
-  ```
-  line 1 : "Lorem ipsum dolor sit amet,
-  line 2 : consectetur adipiscing elit,
-  line 3 : sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-  line 4 : Ut enim ad minim veniam,
-  line 5 : quis nostrud exercitation ullamco
-  line 6 : laboris nisi ut aliquip ex ea commodo consequat.
-  line 7 : Duis aute irure dolor in reprehenderit in
-  line 8 : voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-  line 9 : Excepteur sint occaecat cupidatat non proident,
-  line 10 : sunt in culpa qui officia deserunt mollit anim id est laborum."
+  The return value can be 1, 0 or -1 depending on whether a line has been read, when the reading has been completed (meaning read has returned 0), or if an error has happened respectively.
   
-  return value = 0
+  When you've reached the End Of File, you must store the current buffer in "line". If the buffer is empty you must store an empty string in "line".
+  
+  When you've reached the End Of File, your function should keep 0 memory allocated with malloc except the last buffer that you should have stored in "line".
+  
+  What you've stored in "line" should be free-able.
+  
+  Calling your function get_next_line in a loop will therefore allow you to read the text available on a file descriptor one line at a time until the end of the text, no matter the size of either the text or one of its lines.
+  
+  Make sure that your function behaves well when it reads from a file, from the standard output, from a redirection etc.
+  
+  No call to another function will be done on the file descriptor between 2 calls of get_next_line.
+  
+  Finally we consider that get_next_line has an undefined behavior when reading from a binary file.
+  
+  You should use the test.sh to help you test your get_next_line.
   ```
 
+#### :page_facing_up:  Commands
 
+- Compile
 
-------
+  ```
+  gcc -Wall -Werror -Wextra get_next_line.c main.c -I ./ -o get_next_line
+  ```
 
-#### :link: Test Tools Links
+- Test
 
-- [**42TESTERS-GNL** by Mazoise](https://github.com/Mazoise/42TESTERS-GNL)
-
-- [**gnlkiller** by DontBreakAlex](https://github.com/DontBreakAlex/gnlkiller)
-
-- [**GNL_lover** by charMstr](https://github.com/charMstr/GNL_lover)
-- [**gnl-war-machine-v2019** by Alexandre94H](https://github.com/Alexandre94H/gnl-war-machine-v2019 )
-
+  ```
+  ./get_next_line < testfile.txt(ex. get_next.line.c)
+  ```
